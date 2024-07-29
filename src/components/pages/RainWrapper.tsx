@@ -21,6 +21,8 @@ interface RainImagesProps {
 	forceFieldRadius?: number
 	/** Optional friction value to be applied to the images. Defaults to a minimum of 15. */
 	friction?: number
+	/** Optional mass value to be applied to the images. Defaults to a minimum of 1. */
+	mass?: number
 	/** Optional image size multiplier */
 	sizeMultiplier?: number
 }
@@ -32,12 +34,15 @@ const RainImages: React.FC<RainImagesProps> = ({
 	gravity = 60,
 	forceFieldRadius = 100,
 	friction = 15,
+	mass = 1,
 	sizeMultiplier = 1,
 }) => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
 	const yoffset = numImages / 4
 	friction = Math.max(friction, 15)
+	mass = Math.max(mass, 1)
+	const yTo = window.innerHeight + 100
 
 	const FORCE_MULTIPLIER = gravity * 13.66
 
@@ -49,8 +54,8 @@ const RainImages: React.FC<RainImagesProps> = ({
 			scale: getRandom(0.5, 1) * sizeMultiplier,
 			rotate: getRandom(0, 360),
 		},
-		to: { y: window.innerHeight + 100 },
-		config: { mass: 1, tension: 170, friction: friction },
+		to: { y: yTo },
+		config: { mass: mass, tension: 170, friction: friction },
 	}))
 
 	useEffect(() => {
@@ -89,7 +94,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 				let newX = spring.x.get() + fx
 				let newOpacity = 1
 				let newFriction = friction
-				let mass = 1
+				let newMass = mass
 
 				if (newY > window.innerHeight) {
 					newOpacity = 0
@@ -97,16 +102,30 @@ const RainImages: React.FC<RainImagesProps> = ({
 					newOpacity = 1
 				}
 
-				if (newY > window.innerHeight * 1.1) {
-					newY = -window.innerHeight * 20
-					newX = getRandom(0, window.innerWidth)
-					newFriction = 0
-					mass = 0.1
-					newOpacity = 0
-				} else if (newY < -window.innerHeight * yoffset) {
-					newY = -window.innerHeight * yoffset
-				} else if (newY < -window.innerHeight) {
-					newOpacity = 0
+				if (gravity > 1) {
+					if (newY > window.innerHeight * 1.1) {
+						newY = -window.innerHeight * yoffset
+						newX = getRandom(0, window.innerWidth)
+						newFriction = 0
+						newMass = 0.1
+						newOpacity = 0
+					} else if (newY < -window.innerHeight * yoffset) {
+						newY = -window.innerHeight * yoffset
+					} else if (newY < -window.innerHeight) {
+						newOpacity = 0
+					}
+				} else {
+					if (newY < -window.innerHeight * 0.1) {
+						newY = window.innerHeight * yoffset
+						newX = getRandom(0, window.innerWidth)
+						newFriction = 0
+						newMass = 0.1
+						newOpacity = 1
+					} else if (newY > window.innerHeight * yoffset) {
+						newY = window.innerHeight * yoffset
+					} else if (newY > window.innerHeight) {
+						newOpacity = 1
+					}
 				}
 
 				return {
@@ -114,7 +133,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 					x: newX,
 					opacity: newOpacity,
 					config: {
-						mass: mass,
+						mass: newMass,
 						tension: 170,
 						friction: newFriction,
 					},
