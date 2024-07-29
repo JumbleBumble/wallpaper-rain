@@ -21,6 +21,8 @@ interface RainImagesProps {
 	forceFieldRadius?: number
 	/** Optional friction value to be applied to the images. Defaults to a minimum of 15. */
 	friction?: number
+	/** Optional image size multiplier */
+	sizeMultiplier?: number
 }
 
 const RainImages: React.FC<RainImagesProps> = ({
@@ -30,11 +32,12 @@ const RainImages: React.FC<RainImagesProps> = ({
 	gravity = 60,
 	forceFieldRadius = 100,
 	friction = 15,
+	sizeMultiplier = 1,
 }) => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
 	const yoffset = numImages / 4
-    friction = Math.max(friction, 15)
+	friction = Math.max(friction, 15)
 
 	const FORCE_MULTIPLIER = gravity * 13.66
 
@@ -43,7 +46,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 		from: {
 			x: getRandom(0, window.innerWidth),
 			y: getRandom(-window.innerHeight * yoffset, 0),
-			scale: getRandom(0.5, 1),
+			scale: getRandom(0.5, 1) * sizeMultiplier,
 			rotate: getRandom(0, 360),
 		},
 		to: { y: window.innerHeight + 100 },
