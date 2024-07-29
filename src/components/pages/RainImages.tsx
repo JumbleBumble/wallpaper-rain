@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSprings, animated, to } from '@react-spring/web'
+import { throttle } from 'lodash'
 
-const NUM_IMAGES = 30
-const GRAVITY = 50
+const NUM_IMAGES = 140
+const GRAVITY = 40
 const FORCE_FIELD_RADIUS = 100
 const FORCE_MULTIPLIER = 40
 const FRICTION = 26
@@ -13,12 +14,13 @@ const getRandom = (min: number, max: number) =>
 const RainImages: React.FC = () => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
+	const yoffset = 20
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [springs, api] = useSprings(NUM_IMAGES, (_index: number) => ({
 		from: {
 			x: getRandom(0, window.innerWidth),
-			y: getRandom(-window.innerHeight, 0),
+			y: getRandom(-window.innerHeight * yoffset, 0),
 			scale: getRandom(0.5, 1),
 			rotate: getRandom(0, 360),
 		},
@@ -27,9 +29,9 @@ const RainImages: React.FC = () => {
 	}))
 
 	useEffect(() => {
-		const handleMouseMove = (event: MouseEvent) => {
+		const handleMouseMove = throttle((event: MouseEvent) => {
 			setMouse({ x: event.clientX, y: event.clientY })
-		}
+		}, 50)
 
 		window.addEventListener('mousemove', handleMouseMove)
 
@@ -61,34 +63,37 @@ const RainImages: React.FC = () => {
 
 				let newY = spring.y.get() + GRAVITY + fy
 				let newX = spring.x.get() + fx
-                let newOpacity = 1
-                let friction = 26
-                let mass = 1
+				let newOpacity = 1
+				let friction = 26
+				let mass = 1
 
-                if (newY > window.innerHeight) {
+				if (newY > window.innerHeight) {
 					newOpacity = 0
 				} else {
 					newOpacity = 1
 				}
 
-				if (newY > window.innerHeight * 1.4) {
+				if (newY > window.innerHeight * 1.1) {
 					newY = -window.innerHeight * 20
 					newX = getRandom(0, window.innerWidth)
-                    friction = 0
-                    mass = 0.1
-				} else if (newY < -window.innerHeight * 2) {
-                    newY = -window.innerHeight
-                }
-					return {
-						y: newY,
-						x: newX,
-						opacity: newOpacity,
-						config: {
-							mass: mass,
-							tension: 170,
-							friction: friction,
-						},
-					}
+					friction = 0
+					mass = 0.1
+					newOpacity = 0
+				} else if (newY < -window.innerHeight * yoffset) {
+					newY = -window.innerHeight * yoffset
+				} else if (newY < -window.innerHeight) {
+					newOpacity = 0
+				}
+				return {
+					y: newY,
+					x: newX,
+					opacity: newOpacity,
+					config: {
+						mass: mass,
+						tension: 170,
+						friction: friction,
+					},
+				}
 			})
 
 			animationFrameId = requestAnimationFrame(animate)
