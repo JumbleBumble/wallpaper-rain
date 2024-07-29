@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSprings, animated, to } from '@react-spring/web'
 import { throttle } from 'lodash'
 
-const NUM_IMAGES = 140
+const NUM_IMAGES = 8
 const GRAVITY = 40
 const FORCE_FIELD_RADIUS = 100
 const FORCE_MULTIPLIER = 40
@@ -14,7 +14,7 @@ const getRandom = (min: number, max: number) =>
 const RainImages: React.FC = () => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
-	const yoffset = 20
+	const yoffset = NUM_IMAGES / 4
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [springs, api] = useSprings(NUM_IMAGES, (_index: number) => ({
@@ -84,6 +84,7 @@ const RainImages: React.FC = () => {
 				} else if (newY < -window.innerHeight) {
 					newOpacity = 0
 				}
+
 				return {
 					y: newY,
 					x: newX,
