@@ -182,6 +182,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 		friction,
 		mass,
 		blackholeEffect,
+		maxVelocity,
 	])
 
 	return (
