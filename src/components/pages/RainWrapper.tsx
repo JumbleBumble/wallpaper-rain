@@ -13,20 +13,26 @@ interface RainImagesProps {
 	src: string
 	/** Optional React nodes to be rendered inside the component. */
 	children?: ReactNode
-	/** Optional number of images to be displayed. */
+	/** Optional number of images to be displayed. Defaults to 50 */
 	numImages?: number
-	/** Optional gravity value to be applied to the images. */
+	/** Optional gravity value to be applied to the images. Defaults to 60 */
 	gravity?: number
-	/** Optional radius for the force field effect. */
+	/** Optional radius for the force field effect. Defaults to 100 */
 	forceFieldRadius?: number
 	/** Optional friction value to be applied to the images. Defaults to a minimum of 15. */
 	friction?: number
 	/** Optional mass value to be applied to the images. Defaults to a minimum of 1. */
 	mass?: number
+	/** Optional image max velocity. Defaults to 100 */
+	maxVelocity?: number
 	/** Optional image size multiplier */
 	sizeMultiplier?: number
+	/** Optional cursor force multiplier. Defaults to 13.66 */
+	forceMultiplier?: number
 	/** Optional boolean to toggle cursor interaction. Defaults to true */
 	cursorInteract?: boolean
+	/** Optional boolean to toggle blackhole effect. Defaults to false */
+	blackholeEffect?: boolean
 }
 
 const RainImages: React.FC<RainImagesProps> = ({
@@ -37,8 +43,11 @@ const RainImages: React.FC<RainImagesProps> = ({
 	forceFieldRadius = 100,
 	friction = 15,
 	mass = 1,
+	maxVelocity = 100,
 	sizeMultiplier = 1,
+	forceMultiplier = 13.66,
 	cursorInteract = true,
+	blackholeEffect = false,
 }) => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -46,8 +55,8 @@ const RainImages: React.FC<RainImagesProps> = ({
 	friction = Math.max(friction, 15)
 	mass = Math.max(mass, 1)
 	const yTo = window.innerHeight + 100
-	
-	const FORCE_MULTIPLIER = gravity * 13.66
+
+	const FORCE_MULTIPLIER = gravity * forceMultiplier
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [springs, api] = useSprings(numImages, (_index: number) => ({
@@ -88,12 +97,19 @@ const RainImages: React.FC<RainImagesProps> = ({
 				let fx = 0,
 					fy = 0
 				if (distance < forceFieldRadius) {
+					let forceDirection = blackholeEffect ? -1 : 1
+					forceDirection =
+						gravity > 0 ? forceDirection : -forceDirection
 					const force =
 						((forceFieldRadius - distance) / forceFieldRadius) *
-						FORCE_MULTIPLIER
+						FORCE_MULTIPLIER *
+						forceDirection
 					fx = force * (dx / distance)
 					fy = force * (dy / distance)
 				}
+
+				fx = Math.min(maxVelocity, Math.max(-maxVelocity, fx))
+				fy = Math.min(maxVelocity, Math.max(-maxVelocity, fy))
 
 				let newY = spring.y.get() + gravity + fy
 				let newX = spring.x.get() + fx
@@ -165,6 +181,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 		FORCE_MULTIPLIER,
 		friction,
 		mass,
+		blackholeEffect,
 	])
 
 	return (
