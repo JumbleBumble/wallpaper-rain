@@ -8,6 +8,7 @@ function App() {
 				src="https://media-public.canva.com/56DI4/MAFIJu56DI4/1/tl.png"
 				gravity={-60}
 				sizeMultiplier={6}
+				cursorInteract={false}
 			>
 				<div>Your content here</div>
 			</RainImages>

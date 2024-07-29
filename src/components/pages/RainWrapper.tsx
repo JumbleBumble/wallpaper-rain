@@ -25,6 +25,8 @@ interface RainImagesProps {
 	mass?: number
 	/** Optional image size multiplier */
 	sizeMultiplier?: number
+	/** Optional boolean to toggle cursor interaction. Defaults to true */
+	cursorInteract?: boolean
 }
 
 const RainImages: React.FC<RainImagesProps> = ({
@@ -36,6 +38,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 	friction = 15,
 	mass = 1,
 	sizeMultiplier = 1,
+	cursorInteract = true,
 }) => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -59,16 +62,18 @@ const RainImages: React.FC<RainImagesProps> = ({
 	}))
 
 	useEffect(() => {
-		const handleMouseMove = throttle((event: MouseEvent) => {
-			setMouse({ x: event.clientX, y: event.clientY })
-		}, 50)
+		if (cursorInteract) {
+			const handleMouseMove = throttle((event: MouseEvent) => {
+				setMouse({ x: event.clientX, y: event.clientY })
+			}, 50)
 
-		window.addEventListener('mousemove', handleMouseMove)
+			window.addEventListener('mousemove', handleMouseMove)
 
-		return () => {
-			window.removeEventListener('mousemove', handleMouseMove)
+			return () => {
+				window.removeEventListener('mousemove', handleMouseMove)
+			}
 		}
-	}, [])
+	}, [cursorInteract])
 
 	useEffect(() => {
 		let animationFrameId: number | undefined
