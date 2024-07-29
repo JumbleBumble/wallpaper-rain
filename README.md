@@ -1,31 +1,106 @@
-# React + TypeScript + Vite
-DEFAULT README BELOW FOR VITE
+# RainImages Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React component that displays a rain-like effect with images using `@react-spring/web`. The images can interact with the cursor, simulate gravity, and includes a force field and blackhole effect.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+npm install @react-spring/web lodash
 
-## Expanding the ESLint configuration
+## Usage
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+import React from 'react'
+import RainImages from './RainWrapper'
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
+const App = () => {
+  return (
+    <div>
+      <RainImages 
+        src="path/to/your/image.png" 
+        numImages={100} 
+        gravity={80} 
+        forceFieldRadius={150} 
+        friction={20} 
+        mass={1.5} 
+        maxVelocity={150} 
+        sizeMultiplier={1.2} 
+        forceMultiplier={15} 
+        blackholeEffect={true} 
+      >
+        <YourContentHere />
+      </RainImages>
+    </div>
+  )
 }
-```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+export default App
+
+## Props
+
+### `src`
+- **Type:** `string`
+- **Description:** Source URL of the image.
+
+### `children`
+- **Type:** `ReactNode`
+- **Optional:** Yes
+- **Description:** Optional React nodes to be rendered inside the component.
+
+### `numImages`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `50`
+- **Description:** Number of images to be displayed.
+
+### `gravity`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `60`
+- **Description:** Gravity value to be applied to the images.
+
+### `forceFieldRadius`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `100`
+- **Description:** Radius for the force field effect.
+
+### `friction`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `15`
+- **Description:** Friction value to be applied to the images.
+
+### `mass`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `1`
+- **Description:** Mass value to be applied to the images.
+
+### `maxVelocity`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `100`
+- **Description:** Image max velocity.
+
+### `sizeMultiplier`
+- **Type:** `number`
+- **Optional:** Yes
+- **Description:** Image size multiplier.
+
+### `forceMultiplier`
+- **Type:** `number`
+- **Optional:** Yes
+- **Default:** `13.66`
+- **Description:** Cursor force multiplier.
+
+### `cursorInteract`
+- **Type:** `boolean`
+- **Optional:** Yes
+- **Default:** `true`
+- **Description:** Toggle cursor interaction.
+
+### `blackholeEffect`
+- **Type:** `boolean`
+- **Optional:** Yes
+- **Default:** `false`
+- **Description:** Toggle blackhole effect.
+
