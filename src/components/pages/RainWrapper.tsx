@@ -46,7 +46,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 	friction = Math.max(friction, 15)
 	mass = Math.max(mass, 1)
 	const yTo = window.innerHeight + 100
-
+	
 	const FORCE_MULTIPLIER = gravity * 13.66
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -120,7 +120,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 						newOpacity = 0
 					}
 				} else {
-					if (newY < -window.innerHeight * 0.1) {
+					if (newY < -window.innerHeight) {
 						newY = window.innerHeight * yoffset
 						newX = getRandom(0, window.innerWidth)
 						newFriction = 0
@@ -164,6 +164,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 		forceFieldRadius,
 		FORCE_MULTIPLIER,
 		friction,
+		mass,
 	])
 
 	return (
