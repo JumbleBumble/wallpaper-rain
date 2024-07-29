@@ -5,12 +5,23 @@ import { throttle } from 'lodash'
 const getRandom = (min: number, max: number) =>
 	Math.random() * (max - min) + min
 
+/**
+ * Props for the RainImages component.
+ * 
+ * @interface RainImagesProps
+ */
 interface RainImagesProps {
+	/** Source URL of the image. */
 	src: string
+	/** Optional React nodes to be rendered inside the component. */
 	children?: ReactNode
+	/** Optional number of images to be displayed. */
 	numImages?: number
+	/** Optional gravity value to be applied to the images. */
 	gravity?: number
+	/** Optional radius for the force field effect. */
 	forceFieldRadius?: number
+	/** Optional friction value to be applied to the images. Defaults to a minimum of 15. */
 	friction?: number
 }
 
@@ -25,6 +36,7 @@ const RainImages: React.FC<RainImagesProps> = ({
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
 	const yoffset = numImages / 4
+    friction = Math.max(friction, 15)
 
 	const FORCE_MULTIPLIER = gravity * 13.66
 
