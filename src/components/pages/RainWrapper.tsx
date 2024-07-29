@@ -1,23 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, ReactNode } from 'react'
 import { useSprings, animated, to } from '@react-spring/web'
 import { throttle } from 'lodash'
-
-const NUM_IMAGES = 50
-const GRAVITY = 60
-const FORCE_FIELD_RADIUS = 100
-const FORCE_MULTIPLIER = GRAVITY * 13.66
-const FRICTION = 15 //min 15?
 
 const getRandom = (min: number, max: number) =>
 	Math.random() * (max - min) + min
 
-const RainImages: React.FC = () => {
+interface RainImagesProps {
+	src: string
+	children?: ReactNode
+	numImages?: number
+	gravity?: number
+	forceFieldRadius?: number
+	friction?: number
+}
+
+const RainImages: React.FC<RainImagesProps> = ({
+	src,
+	children,
+	numImages = 50,
+	gravity = 60,
+	forceFieldRadius = 100,
+	friction = 15,
+}) => {
 	const [mouse, setMouse] = useState({ x: 0, y: 0 })
 	const containerRef = useRef<HTMLDivElement>(null)
-	const yoffset = NUM_IMAGES / 4
+	const yoffset = numImages / 4
+
+	const FORCE_MULTIPLIER = gravity * 13.66
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [springs, api] = useSprings(NUM_IMAGES, (_index: number) => ({
+	const [springs, api] = useSprings(numImages, (_index: number) => ({
 		from: {
 			x: getRandom(0, window.innerWidth),
 			y: getRandom(-window.innerHeight * yoffset, 0),
@@ -25,7 +37,7 @@ const RainImages: React.FC = () => {
 			rotate: getRandom(0, 360),
 		},
 		to: { y: window.innerHeight + 100 },
-		config: { mass: 1, tension: 170, friction: FRICTION },
+		config: { mass: 1, tension: 170, friction: friction },
 	}))
 
 	useEffect(() => {
@@ -52,19 +64,18 @@ const RainImages: React.FC = () => {
 
 				let fx = 0,
 					fy = 0
-				if (distance < FORCE_FIELD_RADIUS) {
+				if (distance < forceFieldRadius) {
 					const force =
-						((FORCE_FIELD_RADIUS - distance) /
-							FORCE_FIELD_RADIUS) *
+						((forceFieldRadius - distance) / forceFieldRadius) *
 						FORCE_MULTIPLIER
 					fx = force * (dx / distance)
 					fy = force * (dy / distance)
 				}
 
-				let newY = spring.y.get() + GRAVITY + fy
+				let newY = spring.y.get() + gravity + fy
 				let newX = spring.x.get() + fx
 				let newOpacity = 1
-				let friction = FRICTION
+				let newFriction = friction
 				let mass = 1
 
 				if (newY > window.innerHeight) {
@@ -76,7 +87,7 @@ const RainImages: React.FC = () => {
 				if (newY > window.innerHeight * 1.1) {
 					newY = -window.innerHeight * 20
 					newX = getRandom(0, window.innerWidth)
-					friction = 0
+					newFriction = 0
 					mass = 0.1
 					newOpacity = 0
 				} else if (newY < -window.innerHeight * yoffset) {
@@ -92,7 +103,7 @@ const RainImages: React.FC = () => {
 					config: {
 						mass: mass,
 						tension: 170,
-						friction: friction,
+						friction: newFriction,
 					},
 				}
 			})
@@ -107,7 +118,16 @@ const RainImages: React.FC = () => {
 				cancelAnimationFrame(animationFrameId)
 			}
 		}
-	}, [mouse, api, springs, yoffset])
+	}, [
+		mouse,
+		api,
+		springs,
+		yoffset,
+		gravity,
+		forceFieldRadius,
+		FORCE_MULTIPLIER,
+		friction,
+	])
 
 	return (
 		<div
@@ -132,11 +152,12 @@ const RainImages: React.FC = () => {
 						),
 						width: 50,
 						height: 50,
-						backgroundImage: 'url(https://via.placeholder.com/50)',
+						backgroundImage: `url(${src})`,
 						backgroundSize: 'cover',
 					}}
 				/>
 			))}
+			{children}
 		</div>
 	)
 }
