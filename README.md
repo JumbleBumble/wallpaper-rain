@@ -7,7 +7,7 @@ A React component that displays a rain-like effect with images using `@react-spr
 npm install @react-spring/web lodash
 
 ## Usage
-
+```ts
 import React from 'react'
 import RainImages from './RainWrapper'
 
@@ -33,7 +33,7 @@ const App = () => {
 }
 
 export default App
-
+```
 ## Props
 
 ### `src`
